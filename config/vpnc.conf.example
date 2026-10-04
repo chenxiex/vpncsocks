@@ -1,0 +1,16 @@
+# Copy to vpnc.conf, replace every REPLACE_WITH_* value, and chmod 600 vpnc.conf.
+# Values extend to the end of the line; do not append inline comments.
+IPSec gateway REPLACE_WITH_VPN_GATEWAY
+IPSec ID REPLACE_WITH_IPSEC_GROUP_ID
+IPSec secret REPLACE_WITH_IPSEC_SECRET
+Xauth username REPLACE_WITH_VPN_USERNAME
+Xauth password REPLACE_WITH_VPN_PASSWORD
+# Optional settings: uncomment and change values to override the defaults.
+# Interface MTU must be an integer from 576 to 1500; default is 1412.
+# Interface MTU 1412
+# Enable weak encryption must be 0 or 1; default is 0.
+# Use 1 only when DES/3DES is required.
+# Enable weak encryption 0
+# Optional VPN DNS: omit to use DNS supplied by the VPN.
+# Example documentation addresses below must be replaced with reachable VPN DNS.
+# VPN DNS 192.0.2.53,192.0.2.54

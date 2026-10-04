@@ -1,0 +1,8 @@
+/vpnc.conf
+/.env
+/secrets/
+__pycache__/
+*.pyc
+
+# Keep original VPN manuals local.
+/*.pdf
