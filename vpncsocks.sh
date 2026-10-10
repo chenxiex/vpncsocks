@@ -11,6 +11,7 @@ run_options=(
     --pull="${VPNCS_PULL:-never}" --userns=host --user 0
     --device=/dev/net/tun:/dev/net/tun:rw --cap-add=NET_ADMIN
     --sysctl=net.ipv4.conf.all.rp_filter=2
+    --network=pasta:-I,eth0,--ipv4-only,--mtu,1500 --http-proxy=false
     -v "$config:/run/secrets/vpnc.conf:ro"
 )
 
@@ -18,10 +19,10 @@ command=${1:-help}
 if (( $# )); then shift; fi
 case $command in
     build)
-        exec podman build -t "$image" "$@" "$script_dir"
+        exec podman build --http-proxy=false -t "$image" "$@" "$script_dir"
         ;;
     pull)
-        exec podman pull "$@" "$image"
+        exec podman pull --http-proxy=false "$@" "$image"
         ;;
     start)
         exec podman run -d --name "$name" "${run_options[@]}" \
