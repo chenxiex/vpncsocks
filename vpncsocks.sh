@@ -11,7 +11,7 @@ run_options=(
     --pull="${VPNCS_PULL:-never}" --userns=host --user 0
     --device=/dev/net/tun:/dev/net/tun:rw --cap-add=NET_ADMIN
     --sysctl=net.ipv4.conf.all.rp_filter=2
-    --network=pasta:-I,eth0,--ipv4-only,--mtu,1500 --http-proxy=false
+    --network=pasta:-I,eth0,--ipv4-only,--mtu,1500 
     -v "$config:/run/secrets/vpnc.conf:ro"
 )
 
