@@ -40,11 +40,22 @@ Xauth password REPLACE_WITH_VPN_PASSWORD
 
 `vpncsocks.sh` 是 Podman 命令的简单封装，直接保留 Podman 的输出和退出码，不额外记录日志或重试。`start` 创建新的后台容器；容器名称已存在时会报错。已停止的容器使用 `./vpncsocks.sh restart` 或 `podman start vpncsocks`。
 
+也可以不在本地构建，直接使用 GitHub Actions 发布到 GHCR 的镜像（`main` 分支为 `latest`，`v*` 标签为对应版本号）：
+
+```sh
+export VPNCS_IMAGE=ghcr.io/chenxiex/vpncsocks:latest
+./vpncsocks.sh pull
+./vpncsocks.sh start
+```
+
+或者设置 `VPNCS_PULL=missing`（本地没有时才拉取）或 `VPNCS_PULL=always`，跳过单独的 `pull` 步骤。
+
 ### 脚本命令与参数
 
 | 命令 | 用途 |
 | --- | --- |
 | `build [Podman build 参数]` | 从脚本所在目录构建镜像。 |
+| `pull [Podman pull 参数]` | 拉取 `VPNCS_IMAGE` 指定的镜像，例如 GHCR 发布的镜像。 |
 | `start [Podman run 参数]` | 创建常驻容器，发布 SOCKS5/HTTP 端口并配置健康检查。 |
 | `stdio HOST PORT` | 按需创建附着 stdin/stdout 的临时容器，不发布端口，结束后自动删除。 |
 | `exec-stdio HOST PORT` | 使用已有常驻容器的 stdio 转发。 |
@@ -57,6 +68,7 @@ Xauth password REPLACE_WITH_VPN_PASSWORD
 | 参数 | 默认值 | 用途 |
 | --- | --- | --- |
 | `VPNCS_IMAGE` | `localhost/vpncsocks` | 构建和运行的镜像名称。 |
+| `VPNCS_PULL` | `never` | 运行时的 Podman `--pull` 策略：`never`、`missing`、`always` 或 `newer`。 |
 | `VPNCS_NAME` | `vpncsocks` | 常驻容器名称；按需 stdio 不使用固定名称。 |
 | `VPNCS_CONFIG` | 脚本所在目录的 `vpnc.conf` | 宿主凭据路径；显式指定相对路径时，按当前工作目录解析。 |
 | `VPNCS_SOCKS_PORT` | `1080` | 常驻代理发布到宿主 `127.0.0.1` 的 SOCKS5 端口。 |
@@ -68,7 +80,7 @@ Xauth password REPLACE_WITH_VPN_PASSWORD
 VPNCS_SOCKS_PORT=11080 ./vpncsocks.sh start
 ```
 
-脚本运行容器时使用 `--pull=never`，需要先构建镜像。修改镜像、脚本参数、端口或挂载路径后，执行 `rm` 再 `start`；`restart` 使用原来的容器参数。原地更新配置文件后可以 `restart` 重新读取。
+脚本运行容器时默认使用 `--pull=never`（可用 `VPNCS_PULL` 修改），需要先构建或拉取镜像。修改镜像、脚本参数、端口或挂载路径后，执行 `rm` 再 `start`；`restart` 使用原来的容器参数。原地更新配置文件后可以 `restart` 重新读取。
 
 ### 原生 Podman 参数
 

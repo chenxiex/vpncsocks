@@ -8,7 +8,7 @@ config=${VPNCS_CONFIG:-$script_dir/vpnc.conf}
 [[ $config == /* ]] || config=$PWD/$config
 
 run_options=(
-    --pull=never --userns=host --user 0
+    --pull="${VPNCS_PULL:-never}" --userns=host --user 0
     --device=/dev/net/tun:/dev/net/tun:rw --cap-add=NET_ADMIN
     --sysctl=net.ipv4.conf.all.rp_filter=2
     --network=pasta:-I,eth0,--ipv4-only,--mtu,1500 --http-proxy=false
@@ -20,6 +20,9 @@ if (( $# )); then shift; fi
 case $command in
     build)
         exec podman build --http-proxy=false -t "$image" "$@" "$script_dir"
+        ;;
+    pull)
+        exec podman pull --http-proxy=false "$@" "$image"
         ;;
     start)
         exec podman run -d --name "$name" "${run_options[@]}" \
@@ -41,7 +44,7 @@ case $command in
         exec podman ps -a --filter "name=$name" "$@"
         ;;
     help|-h|--help)
-        printf 'Usage: %s {build|start|stop|restart|rm|logs|status} [Podman options]\n       %s {stdio|exec-stdio} HOST PORT\n' "$0" "$0"
+        printf 'Usage: %s {build|pull|start|stop|restart|rm|logs|status} [Podman options]\n       %s {stdio|exec-stdio} HOST PORT\n' "$0" "$0"
         ;;
     *)
         printf 'Unknown command: %s (use --help)\n' "$command" >&2
